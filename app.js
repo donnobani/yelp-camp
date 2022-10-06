@@ -3,6 +3,8 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 
+const Campground = require("./models/campground");
+
 mongoose.connect("mongodb://localhost:27017/yelp-camp");
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -19,4 +21,10 @@ app.listen(3000, () => {
 
 app.get("/", (req, res) => {
   res.render("home");
+});
+
+app.get("/makecampground", async (req, res) => {
+  const camp = new Campground({ title: "My backyard" });
+  await camp.save();
+  res.send(camp);
 });
