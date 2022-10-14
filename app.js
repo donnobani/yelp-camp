@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 const methorOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 
 const Campground = require("./models/campground");
 const { urlencoded } = require("express");
@@ -16,6 +17,8 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+// sets ejs-mate as engine to parse EJS instead of default
+app.engine("ejs", ejsMate);
 // allows ejs to work through render
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
