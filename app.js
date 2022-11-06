@@ -27,10 +27,6 @@ app.use(express.urlencoded({ extended: true }));
 // allows us to use put requuest from form
 app.use(methorOverride("_method"));
 
-app.listen(3000, () => {
-  console.log("Serving on port 3000");
-});
-
 app.get("/", async (req, res) => {
   res.render("home");
 });
@@ -53,10 +49,14 @@ app.get("/campgrounds/:id", async (req, res) => {
 });
 
 // creates new campground and redirects to new campground
-app.post("/campgrounds", async (req, res) => {
-  const campground = new Campground(req.body.campground); // grouping allowed by using campground[property] as name
-  await campground.save();
-  res.redirect(`/campgrounds/${campground._id}`);
+app.post("/campgrounds", async (req, res, next) => {
+  try {
+    const campground = new Campground(req.body.campground); // grouping allowed by using campground[property] as name
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  } catch (e) {
+    next(e);
+  }
 });
 
 // serves form to edit campground
@@ -78,4 +78,12 @@ app.delete("/campgrounds/:id", async (req, res) => {
   const { id } = req.params;
   await Campground.findByIdAndDelete(id);
   res.redirect("/campgrounds");
+});
+
+app.use((err, req, res, next) => {
+  res.send("Oh boy, something went very wrong...");
+});
+
+app.listen(3000, () => {
+  console.log("Serving on port 3000");
 });
